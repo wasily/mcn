@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: mcn
+  data:
+    mongodb:
+      port: 0
+      database: test
+  mail:
+    host: test
+    port: 2222
+    username: test
+    password: test
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+server:
+  port: 8080
