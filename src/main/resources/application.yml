@@ -1,5 +1,19 @@
 spring:
   application:
     name: mcn
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
 server:
   port: 8080
