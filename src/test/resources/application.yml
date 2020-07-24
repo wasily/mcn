@@ -3,12 +3,13 @@ spring:
     name: mcn
   data:
     mongodb:
-      uri: ${MONGODB_URI}
+      port: 0
+      database: test
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USER}
-    password: ${MAIL_PASS}
+    host: test
+    port: 2222
+    username: test
+    password: test
     protocol: smtps
     properties:
       mail:
