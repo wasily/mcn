@@ -1,5 +1,6 @@
 package me.local.mcn.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,6 @@ public class Subscription {
     private String email;
 
     @Field(value = "lastUpdateTime")
+    @JsonIgnore
     private LocalDateTime lastUpdateTime;
 }
