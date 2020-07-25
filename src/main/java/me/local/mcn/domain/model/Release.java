@@ -25,5 +25,5 @@ public class Release {
     private String infoHash;
 
     @Field(value = "releaseTime")
-    private LocalDateTime regTime;
+    private LocalDateTime releaseTime;
 }
