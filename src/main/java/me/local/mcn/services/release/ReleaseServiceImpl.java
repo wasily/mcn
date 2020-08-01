@@ -14,6 +14,6 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     @Override
     public List<Release> getReleases(String title) {
-        return releaseRepository.findByTitle(title);
+        return releaseRepository.findByTitleContaining(title);
     }
 }

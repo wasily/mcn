@@ -1,9 +1,6 @@
 package me.local.mcn.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,8 +10,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Document(collection = "releases")
 public class Release {
+    @Field(value = "trackerId")
+    private String trackerId;
+
     @Field(value = "title")
     private String title;
 

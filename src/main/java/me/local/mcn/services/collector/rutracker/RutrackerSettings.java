@@ -1,4 +1,4 @@
-package me.local.mcn.services.collector;
+package me.local.mcn.services.collector.rutracker;
 
 import lombok.Getter;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 @Getter
 public class RutrackerSettings {
-    public final List<String> moviesSubforums = List.of(
+    private final List<String> moviesSubforums = List.of(
             "187", //Классика мирового кинематографа
             "1950", //Фильмы 2020
             "2090", //Фильмы до 1990 года
@@ -22,7 +22,8 @@ public class RutrackerSettings {
     private final List<String> seriesForums = List.of(
             "189" //Зарубежные сериалы
     );
-    private final String getSubforumsUrl = "http://api.rutracker.org/v1/static/pvc/f/";
-    private final String getReleasesUrl = "http://api.rutracker.org/v1/get_tor_topic_data?by=topic_id&val=";
+    private final String treeUrl = "http://api.rutracker.org/v1/static/cat_forum_tree";
+    private final String subforumsUrl = "http://api.rutracker.org/v1/static/pvc/f/";
+    private final String releasesUrl = "http://api.rutracker.org/v1/get_tor_topic_data?by=topic_id&val=";
     private final int requestLimit = 100;
 }
