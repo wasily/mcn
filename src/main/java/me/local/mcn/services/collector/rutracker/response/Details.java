@@ -17,7 +17,7 @@ public class Details {
     @JsonProperty("size")
     private long size;
 
-    @JsonProperty("infoHash")
+    @JsonProperty("info_hash")
     private String infoHash;
 
     @JsonProperty("reg_time")

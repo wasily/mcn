@@ -5,6 +5,7 @@ import me.local.mcn.domain.model.Release;
 import me.local.mcn.repositories.ReleaseRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,4 +17,11 @@ public class ReleaseServiceImpl implements ReleaseService {
     public List<Release> getReleases(String title) {
         return releaseRepository.findByTitleContaining(title);
     }
+
+    @Override
+    public List<Release> getReleasesByTime(String title, LocalDateTime localDateTime) {
+        return releaseRepository.findByTitleContainingAndReleaseTimeGreaterThan(title, localDateTime);
+    }
+
+
 }

@@ -9,10 +9,8 @@ import me.local.mcn.services.collector.CollectorService;
 import me.local.mcn.services.collector.rutracker.response.ReleaseResponse;
 import me.local.mcn.services.collector.rutracker.response.SubforumDetailsResponse;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -36,17 +34,22 @@ public class RutrackerCollectorService implements CollectorService {
     private final ReleaseRepository releaseRepository;
     private final RutrackerSettings rutrackerSettings = new RutrackerSettings();
     private final RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build()));
-    private long mostRecentReleaseUnixtime = 0;
-    private final MongoTemplate mongoTemplate;
+    private final Logger logger = LoggerFactory.getLogger(RutrackerCollectorService.class);
+    private long mostRecentReleaseUnixtime;
 
     @Override
     public void collect() {
+        long before = releaseRepository.count();
+        logger.info("rutracker collection started.");
         mostRecentReleaseUnixtime = releaseRepository.getMostRecentReleaseUnixtime();
         List<String> releasesIds = getReleasesIds(rutrackerSettings.getMoviesSubforums());
-        releasesIds.addAll(getSeriesSubforums(rutrackerSettings.getSeriesForums()));
+        releasesIds.addAll(getReleasesIds(getSeriesSubforums(rutrackerSettings.getSeriesForums())));
         int chunksCount = (releasesIds.size() + rutrackerSettings.getRequestLimit() - 1) / rutrackerSettings.getRequestLimit();
         IntStream.range(0, chunksCount).parallel().mapToObj(i -> combineIds(releasesIds, i))
-                .forEach(ids -> requestReleases(restTemplate, ids).thenAccept(releases -> releases.forEach(this::saveRelease)));
+                .forEach(ids -> requestReleases(restTemplate, ids).thenAccept(releases -> releases.forEach(this::upsertRelease)).join());
+        long after = releaseRepository.count();
+        logger.info("rutracker collection completed. {} new records added. last release time - {}", after - before,
+                LocalDateTime.ofEpochSecond(releaseRepository.getMostRecentReleaseUnixtime(), 0, ZoneOffset.UTC));
     }
 
     private List<String> getSeriesSubforums(List<String> forumIds) {
@@ -103,14 +106,7 @@ public class RutrackerCollectorService implements CollectorService {
                 });
     }
 
-    private void saveRelease(Release release) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("trackerId").is(release.getTrackerId()));
-        Update update = new Update();
-        update.set("title", release.getTitle());
-        update.set("size", release.getSize());
-        update.set("infoHash", release.getInfoHash());
-        update.set("releaseTime", release.getReleaseTime());
-        mongoTemplate.upsert(query, update, Release.class);
+    private void upsertRelease(Release release) {
+        releaseRepository.upsert(release);
     }
 }

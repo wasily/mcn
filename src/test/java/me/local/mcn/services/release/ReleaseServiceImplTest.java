@@ -28,11 +28,11 @@ class ReleaseServiceImplTest {
     }
 
     @Test
-    void shouldCallFindByTitleMethodWhenSearchingByTitle() {
-        var release1 = new Release("title1", 123, "hash1", LocalDateTime.now().minusDays(1));
-        var release2 = new Release("title2", 124, "hash2", LocalDateTime.now());
+    void shouldCallFindByTitleMethodWhenSearchingByTitleContaining() {
+        var release1 = new Release("id1","title1", 123, "hash1", LocalDateTime.now().minusDays(1));
+        var release2 = new Release("id2","title2", 124, "hash2", LocalDateTime.now());
         List<Release> releases = List.of(release1, release2);
-        when(releaseRepository.findByTitle(anyString())).thenReturn(releases);
+        when(releaseRepository.findByTitleContaining(anyString())).thenReturn(releases);
         assertThat(releases).containsAll(releaseService.getReleases("title"));
     }
 }
