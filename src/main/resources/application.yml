@@ -4,6 +4,9 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+  mongock:
+    change-logs-scan-package:
+      - me.local.mcn.changelogs
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}

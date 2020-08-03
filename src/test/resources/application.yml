@@ -5,6 +5,9 @@ spring:
     mongodb:
       port: 0
       database: test
+  mongock:
+    change-logs-scan-package:
+      - me.local.mcn.changelogs
   mail:
     host: test
     port: 2222
