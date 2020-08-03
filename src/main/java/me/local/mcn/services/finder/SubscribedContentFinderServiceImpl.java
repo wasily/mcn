@@ -37,14 +37,16 @@ public class SubscribedContentFinderServiceImpl implements SubscribedContentFind
         Map<String, List<Subscription>> subscriptionsMap = subscriptionRepository.findAll().stream()
                 .collect(Collectors.groupingBy(Subscription::getEmail, Collectors.toList()));
         subscriptionsMap.forEach((key, value) -> {
-            Credentials credentials = new Credentials(key);
-            List<Release> releases = value.stream()
+            String messageText = value.stream()
                     .map(subscription -> getNewReleases(subscription.getTitle(), subscription.getLastUpdateTime()))
-                    .flatMap(Collection::stream).collect(Collectors.toList());
-            String messageText = releases.stream().map(release -> release.getTitle() + " " + release.getInfoHash())
+                    .flatMap(Collection::stream).map(release -> release.getTitle() + " " + release.getInfoHash())
                     .collect(Collectors.joining("\r\n"));
-            Message message = new Message(messageTopic, messageText);
-            notificationService.notify(credentials, message);
+            if (!messageText.isEmpty()) {
+                Credentials credentials = new Credentials(key);
+                Message message = new Message(messageTopic, messageText);
+                notificationService.notify(credentials, message);
+                logger.info("message sent to subscriber.");
+            }
         });
         subscriptionsMap.values().stream().flatMap(Collection::stream)
                 .forEach(subscription -> subscriptionRepository.updateLastSearchTime(subscription.getId(), newTime));
